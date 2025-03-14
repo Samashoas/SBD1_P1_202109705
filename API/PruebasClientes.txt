@@ -45,3 +45,16 @@ http://localhost:5000/api/users
 
 >>>>BUSCAR USUARIO
 http://localhost:5000/api/test/:id
+
+>>>Actualizar Cliente
+http://localhost:5000/api/users/:id
+
+{
+    "correo": "emilio.perezLOLLOLOL@example.com",
+    "numero": "+505 56565656"
+}
+
+{
+    "correo": "MiNuevoCorreo@example.com",
+    "numero": "+502 25259696"
+}

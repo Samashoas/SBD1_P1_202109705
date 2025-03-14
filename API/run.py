@@ -14,7 +14,7 @@ def get_db_connection():
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>CLIENTES/USUARIOS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 # Crear nuevo cliente
 @app.route('/api/users/', methods=['POST'])
-def create_user():
+def create_cliente():
     data = request.json
 
     required_fields = ["Documento_nacional", "Nombre_Cliente", "Apellido_Cliente", "correo", "correo_confirmado", "password", "numero", "activo"]
@@ -104,7 +104,7 @@ def login_cliente():
         conn.close()
 
 # Obtener Cliente por ID
-@app.route('/api/test/:<int:id>', methods=['GET'])
+@app.route('/api/users/:<int:id>', methods=['GET'])
 def get_cliente(id):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -136,6 +136,86 @@ def get_cliente(id):
         return jsonify(response), 200
 
     except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+# Actualizar Cliente por ID
+@app.route('/api/users/:<int:id>', methods=['PUT'])
+def update_cliente(id):
+    data = request.json
+
+    required_fields = ["correo", "numero"]
+    if not all(field in data for field in required_fields):
+        return jsonify({'error': 'Datos inválidos'}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # Obtener el ID correcto de Info_Cliente a partir de CLIENTE
+        cursor.execute("SELECT id_info_cliente FROM CLIENTE WHERE id = :id", {'id': id})
+        result = cursor.fetchone()
+
+        if not result:
+            return jsonify({'error': 'Cliente no existe'}), 404
+
+        id_info_cliente = result[0]
+
+        # Actualizar Info_Cliente
+        cursor.execute("""
+            UPDATE Info_Cliente
+            SET correo = :correo, numero = :numero
+            WHERE id = :id_info_cliente
+        """, {'correo': data["correo"], 'numero': data["numero"], 'id_info_cliente': id_info_cliente})
+
+        conn.commit()
+
+        return jsonify({"status": "Exitoso", "message": "Cliente actualizado de forma exitosa"}), 200
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+# Eliminar Cliente por ID
+@app.route('/api/users/:<int:id>', methods=['DELETE'])
+def deactivate_cliente(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # Verificar si el cliente existe y su estado
+        cursor.execute("SELECT Actiivo FROM CLIENTE WHERE id = :id", {'id': id})
+        result = cursor.fetchone()
+
+        if not result:
+            return jsonify({'error': 'Cliente no encontrado'}), 404
+
+        estado_actual = result[0]
+
+        # Si ya está inactivo, devolver 404 como si no existiera
+        if estado_actual == 'FALSE':
+            return jsonify({'error': 'Cliente no encontrado'}), 404
+
+        # Actualizar el estado a inactivo
+        cursor.execute("""
+            UPDATE CLIENTE
+            SET Actiivo = 'FALSE'
+            WHERE id = :id
+        """, {'id': id})
+
+        conn.commit()
+
+        return jsonify({"status": "Exitoso", "message": "Cliente desactivado correctamente"}), 200
+
+    except Exception as e:
+        conn.rollback()
         return jsonify({"error": str(e)}), 500
 
     finally:
