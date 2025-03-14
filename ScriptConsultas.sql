@@ -1,23 +1,4 @@
-SELECT * FROM test_table;
-SELECT * FROM Info_Cliente;
-SELECT * FROM Lugar_Entrega;
-SELECT * FROM SKU;
-SELECT * FROM SLUG;
-SELECT * FROM DEPARTAMENTO;
-SELECT * FROM Info_trabajador;
-SELECT * FROM SEDE;
-SELECT * FROM CATEGORIAS;
-SELECT * FROM CLIENTE;
-SELECT * FROM PRODUCTO;
-SELECT * FROM TRABAJADORES;
-SELECT * FROM ORDENES;
-SELECT * FROM Ordenes_Entregadas;
-SELECT * FROM PAGOS;
-SELECT * FROM DIRECCIONES;
-SELECT * FROM Productos_Devolucion;
-SELECT * FROM Inventario;
-SELECT * FROM Imagenes;
-SELECT * FROM Pago_Ordenes;
-SELECT * FROM Ordenes_Productos;
-SELECT * FROM Movimientos;
-SELECT * FROM Movimiento_Productos;
+
+SELECT info_cliente_seq.NEXTVAL, cliente_seq.NEXTVAL FROM DUAL;
+
+

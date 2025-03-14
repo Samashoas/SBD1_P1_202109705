@@ -40,22 +40,26 @@ ALTER TABLE Movimientos DROP CONSTRAINT fk_sede_destino;
 ALTER TABLE Movimiento_Productos DROP CONSTRAINT fk_producto_movimiento;
 ALTER TABLE Movimiento_Productos DROP CONSTRAINT fk_movimiento_producto;
 
+
+
 DROP TABLE test_table;
 CREATE TABLE test_table (
     id NUMBER PRIMARY KEY,
     name VARCHAR2(50)
 );
 
+DROP SEQUENCE info_cliente_seq;
 DROP TABLE Info_Cliente;
 CREATE TABLE Info_Cliente (
     id NUMBER PRIMARY KEY,
     correo VARCHAR2(50) NOT NULL, 
     correo_confirmado VARCHAR(10) NOT NULL,
-    passkey VARCHAR2(20) NOT NULL,
+    passkey VARCHAR2(255) NOT NULL,
     numero VARCHAR2(20) NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP
 );
+CREATE SEQUENCE info_cliente_seq START WITH 10 INCREMENT BY 1;
 
 DROP TABLE Lugar_Entrega;
 CREATE TABLE Lugar_Entrega(
@@ -124,6 +128,7 @@ CREATE TABLE CATEGORIAS(
     updated_at TIMESTAMP
 );
 
+DROP SEQUENCE cliente_seq;
 DROP TABLE CLIENTE;
 CREATE TABLE CLIENTE(
     id NUMBER PRIMARY KEY,
@@ -136,6 +141,7 @@ CREATE TABLE CLIENTE(
     id_info_cliente NUMBER
 );
 ALTER TABLE CLIENTE ADD CONSTRAINT fk_info_cliente FOREIGN KEY (id_info_cliente) REFERENCES Info_Cliente(id);
+CREATE SEQUENCE cliente_seq START WITH 10 INCREMENT BY 1;
 
 DROP TABLE PRODUCTO;
 CREATE TABLE PRODUCTO(
