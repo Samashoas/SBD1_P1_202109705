@@ -2,15 +2,15 @@ INSERT INTO test_table (id, name) VALUES (1, 'Hola');
 INSERT INTO test_table (id, name) VALUES (2, 'Test Name 2');
 --INFORMACION DE CLIENTES
 INSERT INTO Info_Cliente (id, correo, correo_confirmado, passkey, numero, created_at, updated_at) VALUES (1, 'juan.perez@example.com', 'TRUE', 'passkey123', '555-1234', SYSTIMESTAMP, NULL);
-INSERT INTO Info_Cliente (id, correo, correo_confirmado, passkey, numero, created_at, updated_at) VALUES (2, 'jose.perez@example.com', 'FALSE', 'MYPASSS', '*53 1252135556', SYSTIMESTAMP, NULL);
+INSERT INTO Info_Cliente (id, correo, correo_confirmado, passkey, numero, created_at, updated_at) VALUES (2, 'jose.perez@example.com', 'TRUE', 'MYPASSS', '*53 1252135556', SYSTIMESTAMP, NULL);
 INSERT INTO Info_Cliente (id, correo, correo_confirmado, passkey, numero, created_at, updated_at) VALUES (3, 'maria.garcia@example.com', 'TRUE', 'SECUREPASS123', '*54 1252234567', SYSTIMESTAMP, NULL);
-INSERT INTO Info_Cliente (id, correo, correo_confirmado, passkey, numero, created_at, updated_at) VALUES (4, 'pedro.martinez@example.com', 'FALSE', 'MYSECUREPASS', '+55(1252345678)', SYSTIMESTAMP, NULL);
+INSERT INTO Info_Cliente (id, correo, correo_confirmado, passkey, numero, created_at, updated_at) VALUES (4, 'pedro.martinez@example.com', 'TRUE', 'MYSECUREPASS', '+55(1252345678)', SYSTIMESTAMP, NULL);
 INSERT INTO Info_Cliente (id, correo, correo_confirmado, passkey, numero, created_at, updated_at) VALUES (5, 'luisa.lopez@example.com', 'TRUE', 'LUISAPASS2023', '*56+1252456789', SYSTIMESTAMP, NULL);
-INSERT INTO Info_Cliente (id, correo, correo_confirmado, passkey, numero, created_at, updated_at) VALUES (6, 'juan.gomez@example.com', 'FALSE', 'JUANPASS987', '*57 (1252567890)', SYSTIMESTAMP, NULL);
+INSERT INTO Info_Cliente (id, correo, correo_confirmado, passkey, numero, created_at, updated_at) VALUES (6, 'juan.gomez@example.com', 'TRUE', 'JUANPASS987', '*57 (1252567890)', SYSTIMESTAMP, NULL);
 INSERT INTO Info_Cliente (id, correo, correo_confirmado, passkey, numero, created_at, updated_at) VALUES (7, 'ana.sanchez@example.com', 'TRUE', 'ANAPASS5678', '+58 1252678901', SYSTIMESTAMP, NULL);
-INSERT INTO Info_Cliente (id, correo, correo_confirmado, passkey, numero, created_at, updated_at) VALUES (8, 'luis.ramirez@example.com', 'FALSE', 'RAMIREZPASS', '*59 1252789012', SYSTIMESTAMP, NULL);
+INSERT INTO Info_Cliente (id, correo, correo_confirmado, passkey, numero, created_at, updated_at) VALUES (8, 'luis.ramirez@example.com', 'TRUE', 'RAMIREZPASS', '*59 1252789012', SYSTIMESTAMP, NULL);
 INSERT INTO Info_Cliente (id, correo, correo_confirmado, passkey, numero, created_at, updated_at) VALUES (9, 'elena.perez@example.com', 'TRUE', 'ELENAPASS4321', '*60 1252890123', SYSTIMESTAMP, NULL);
-INSERT INTO Info_Cliente (id, correo, correo_confirmado, passkey, numero, created_at, updated_at) VALUES (10, 'carlos.morales@example.com', 'FALSE', 'CARLOSPASS1234', '*61 1252901234', SYSTIMESTAMP, NULL);
+INSERT INTO Info_Cliente (id, correo, correo_confirmado, passkey, numero, created_at, updated_at) VALUES (10, 'carlos.morales@example.com', 'TRUE', 'CARLOSPASS1234', '*61 1252901234', SYSTIMESTAMP, NULL);
 --LUGARES DE ENTREGA
 INSERT INTO Lugar_Entrega (id, Numero_Hogar, Nombre_CA, Ciudad_Entrega, Estado_Entrega, Codigo_Postal, created_at, updated_at) VALUES (1, '123', 'Main Street', 'Los Angeles', 'California', '90001', SYSTIMESTAMP, NULL);
 INSERT INTO Lugar_Entrega (id, Numero_Hogar, Nombre_CA, Ciudad_Entrega, Estado_Entrega, Codigo_Postal, created_at, updated_at) VALUES (2, '456', 'Broadway', 'New York', 'New York', '10001', SYSTIMESTAMP, NULL);
@@ -90,15 +90,15 @@ INSERT INTO CATEGORIAS (id, Nombre_Categoria, created_at, updated_at) VALUES (9,
 INSERT INTO CATEGORIAS (id, Nombre_Categoria, created_at, updated_at) VALUES (10, 'Oficina y Papelería', SYSTIMESTAMP, NULL);
 --CLIENTES
 INSERT INTO CLIENTE (id, Documento_nacional, Nombre_Cliente, Apellido_Cliente, Actiivo, created_at, updated_at, id_info_cliente) VALUES (1, '987654321', 'Juan Carlos', 'Perez Jiménez', 'TRUE', SYSTIMESTAMP, NULL, 1);
-INSERT INTO CLIENTE (id, Documento_nacional, Nombre_Cliente, Apellido_Cliente, Actiivo, created_at, updated_at, id_info_cliente) VALUES (2, '987654322', 'Jose Luis', 'Gomez Martínez', 'FALSE', SYSTIMESTAMP, NULL, 2);
+INSERT INTO CLIENTE (id, Documento_nacional, Nombre_Cliente, Apellido_Cliente, Actiivo, created_at, updated_at, id_info_cliente) VALUES (2, '987654322', 'Jose Luis', 'Gomez Martínez', 'TRUE', SYSTIMESTAMP, NULL, 2);
 INSERT INTO CLIENTE (id, Documento_nacional, Nombre_Cliente, Apellido_Cliente, Actiivo, created_at, updated_at, id_info_cliente) VALUES (3, '987654323', 'Maria Isabel', 'Garcia López', 'TRUE', SYSTIMESTAMP, NULL, 3);
-INSERT INTO CLIENTE (id, Documento_nacional, Nombre_Cliente, Apellido_Cliente, Actiivo, created_at, updated_at, id_info_cliente) VALUES (4, '987654324', 'Pedro Antonio', 'Martinez Ruiz', 'FALSE', SYSTIMESTAMP, NULL, 4);
+INSERT INTO CLIENTE (id, Documento_nacional, Nombre_Cliente, Apellido_Cliente, Actiivo, created_at, updated_at, id_info_cliente) VALUES (4, '987654324', 'Pedro Antonio', 'Martinez Ruiz', 'TRUE', SYSTIMESTAMP, NULL, 4);
 INSERT INTO CLIENTE (id, Documento_nacional, Nombre_Cliente, Apellido_Cliente, Actiivo, created_at, updated_at, id_info_cliente) VALUES (5, '987654325', 'Luisa Fernanda', 'Lopez García', 'TRUE', SYSTIMESTAMP, NULL, 5);
-INSERT INTO CLIENTE (id, Documento_nacional, Nombre_Cliente, Apellido_Cliente, Actiivo, created_at, updated_at, id_info_cliente) VALUES (6, '987654326', 'Juan Manuel', 'Gomez Pérez', 'FALSE', SYSTIMESTAMP, NULL, 6);
+INSERT INTO CLIENTE (id, Documento_nacional, Nombre_Cliente, Apellido_Cliente, Actiivo, created_at, updated_at, id_info_cliente) VALUES (6, '987654326', 'Juan Manuel', 'Gomez Pérez', 'TRUE', SYSTIMESTAMP, NULL, 6);
 INSERT INTO CLIENTE (id, Documento_nacional, Nombre_Cliente, Apellido_Cliente, Actiivo, created_at, updated_at, id_info_cliente) VALUES (7, '987654327', 'Ana María', 'Sanchez Rodríguez', 'TRUE', SYSTIMESTAMP, NULL, 7);
-INSERT INTO CLIENTE (id, Documento_nacional, Nombre_Cliente, Apellido_Cliente, Actiivo, created_at, updated_at, id_info_cliente) VALUES (8, '987654328', 'Luis Enrique', 'Ramirez Martínez', 'FALSE', SYSTIMESTAMP, NULL, 8);
+INSERT INTO CLIENTE (id, Documento_nacional, Nombre_Cliente, Apellido_Cliente, Actiivo, created_at, updated_at, id_info_cliente) VALUES (8, '987654328', 'Luis Enrique', 'Ramirez Martínez', 'TRUE', SYSTIMESTAMP, NULL, 8);
 INSERT INTO CLIENTE (id, Documento_nacional, Nombre_Cliente, Apellido_Cliente, Actiivo, created_at, updated_at, id_info_cliente) VALUES (9, '987654329', 'Elena Sofia', 'Perez Sánchez', 'TRUE', SYSTIMESTAMP, NULL, 9);
-INSERT INTO CLIENTE (id, Documento_nacional, Nombre_Cliente, Apellido_Cliente, Actiivo, created_at, updated_at, id_info_cliente) VALUES (10, '987654330', 'Carlos Alberto', 'Morales Fernández', 'FALSE', SYSTIMESTAMP, NULL, 10);
+INSERT INTO CLIENTE (id, Documento_nacional, Nombre_Cliente, Apellido_Cliente, Actiivo, created_at, updated_at, id_info_cliente) VALUES (10, '987654330', 'Carlos Alberto', 'Morales Fernández', 'TRUE', SYSTIMESTAMP, NULL, 10);
 --PRODUCTOS
 INSERT INTO PRODUCTO (id, created_at, updated_at, Id_Categoria, id_sku, id_slug) VALUES (1, SYSTIMESTAMP, NULL, 1, 1, 1);
 INSERT INTO PRODUCTO (id, created_at, updated_at, Id_Categoria, id_sku, id_slug) VALUES (2, SYSTIMESTAMP, NULL, 2, 2, 2);
@@ -112,14 +112,14 @@ INSERT INTO PRODUCTO (id, created_at, updated_at, Id_Categoria, id_sku, id_slug)
 INSERT INTO PRODUCTO (id, created_at, updated_at, Id_Categoria, id_sku, id_slug) VALUES (10, SYSTIMESTAMP, NULL, 10, 10, 10);
 --TRABAJADORES
 INSERT INTO TRABAJADORES (id, Documento_nacional, Nombre_Trabajador, Apellido_Trabajador, Actiivo, created_at, updated_at, id_info_trabajador, Id_Sede, Id_Departamento) VALUES (1, '112233445', 'Andres Felipe', 'Ramirez Torres', 'TRUE', SYSTIMESTAMP, NULL, 1, 1, 1);
-INSERT INTO TRABAJADORES (id, Documento_nacional, Nombre_Trabajador, Apellido_Trabajador, Actiivo, created_at, updated_at, id_info_trabajador, Id_Sede, Id_Departamento) VALUES (2, '223344556', 'Laura Isabel', 'Martinez Gómez', 'FALSE', SYSTIMESTAMP, NULL, 2, 2, 2);
+INSERT INTO TRABAJADORES (id, Documento_nacional, Nombre_Trabajador, Apellido_Trabajador, Actiivo, created_at, updated_at, id_info_trabajador, Id_Sede, Id_Departamento) VALUES (2, '223344556', 'Laura Isabel', 'Martinez Gómez', 'TRUE', SYSTIMESTAMP, NULL, 2, 2, 2);
 INSERT INTO TRABAJADORES (id, Documento_nacional, Nombre_Trabajador, Apellido_Trabajador, Actiivo, created_at, updated_at, id_info_trabajador, Id_Sede, Id_Departamento) VALUES (3, '334455667', 'Carlos Alberto', 'Pérez Castro', 'TRUE', SYSTIMESTAMP, NULL, 3, 3, 3);
 INSERT INTO TRABAJADORES (id, Documento_nacional, Nombre_Trabajador, Apellido_Trabajador, Actiivo, created_at, updated_at, id_info_trabajador, Id_Sede, Id_Departamento) VALUES (4, '445566778', 'Marta Lucia', 'Lopez Delgado', 'TRUE', SYSTIMESTAMP, NULL, 4, 4, 4);
-INSERT INTO TRABAJADORES (id, Documento_nacional, Nombre_Trabajador, Apellido_Trabajador, Actiivo, created_at, updated_at, id_info_trabajador, Id_Sede, Id_Departamento) VALUES (5, '556677889', 'Jorge Luis', 'Sánchez Pérez', 'FALSE', SYSTIMESTAMP, NULL, 5, 5, 5);
+INSERT INTO TRABAJADORES (id, Documento_nacional, Nombre_Trabajador, Apellido_Trabajador, Actiivo, created_at, updated_at, id_info_trabajador, Id_Sede, Id_Departamento) VALUES (5, '556677889', 'Jorge Luis', 'Sánchez Pérez', 'TRUE', SYSTIMESTAMP, NULL, 5, 5, 5);
 INSERT INTO TRABAJADORES (id, Documento_nacional, Nombre_Trabajador, Apellido_Trabajador, Actiivo, created_at, updated_at, id_info_trabajador, Id_Sede, Id_Departamento) VALUES (6, '667788990', 'Patricia Fernanda', 'Ramírez Sánchez', 'TRUE', SYSTIMESTAMP, NULL, 6, 6, 6);
-INSERT INTO TRABAJADORES (id, Documento_nacional, Nombre_Trabajador, Apellido_Trabajador, Actiivo, created_at, updated_at, id_info_trabajador, Id_Sede, Id_Departamento) VALUES (7, '778899001', 'Ricardo Andrés', 'Gonzalez Pérez', 'FALSE', SYSTIMESTAMP, NULL, 7, 7, 7);
+INSERT INTO TRABAJADORES (id, Documento_nacional, Nombre_Trabajador, Apellido_Trabajador, Actiivo, created_at, updated_at, id_info_trabajador, Id_Sede, Id_Departamento) VALUES (7, '778899001', 'Ricardo Andrés', 'Gonzalez Pérez', 'TRUE', SYSTIMESTAMP, NULL, 7, 7, 7);
 INSERT INTO TRABAJADORES (id, Documento_nacional, Nombre_Trabajador, Apellido_Trabajador, Actiivo, created_at, updated_at, id_info_trabajador, Id_Sede, Id_Departamento) VALUES (8, '889900112', 'Verónica Alicia', 'Martínez Gómez', 'TRUE', SYSTIMESTAMP, NULL, 8, 8, 8);
-INSERT INTO TRABAJADORES (id, Documento_nacional, Nombre_Trabajador, Apellido_Trabajador, Actiivo, created_at, updated_at, id_info_trabajador, Id_Sede, Id_Departamento) VALUES (9, '990011223', 'Oscar Eduardo', 'Hernández Díaz', 'FALSE', SYSTIMESTAMP, NULL, 9, 9, 9);
+INSERT INTO TRABAJADORES (id, Documento_nacional, Nombre_Trabajador, Apellido_Trabajador, Actiivo, created_at, updated_at, id_info_trabajador, Id_Sede, Id_Departamento) VALUES (9, '990011223', 'Oscar Eduardo', 'Hernández Díaz', 'TRUE', SYSTIMESTAMP, NULL, 9, 9, 9);
 INSERT INTO TRABAJADORES (id, Documento_nacional, Nombre_Trabajador, Apellido_Trabajador, Actiivo, created_at, updated_at, id_info_trabajador, Id_Sede, Id_Departamento) VALUES (10, '101112233', 'Felipe Jesús', 'Gutiérrez Martínez', 'TRUE', SYSTIMESTAMP, NULL, 10, 10, 10);
 --ORDENES
 INSERT INTO ORDENES (id, created_at, updated_at, id_cliente, Id_Sede) VALUES (1, SYSTIMESTAMP, NULL, 1, 1);

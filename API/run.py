@@ -17,7 +17,7 @@ def get_db_connection():
 def create_cliente():
     data = request.json
 
-    required_fields = ["Documento_nacional", "Nombre_Cliente", "Apellido_Cliente", "correo", "correo_confirmado", "password", "numero", "activo"]
+    required_fields = ["Documento_nacional", "Nombre_Cliente", "Apellido_Cliente", "correo", "correo_confirmado", "password", "numero"]
     if not all(field in data for field in required_fields):
         return jsonify({'error': 'Datos incompletos'}), 400
 
@@ -25,7 +25,7 @@ def create_cliente():
     cursor = conn.cursor()
 
     try:
-        # Verificar si la inforamción ya está registrada en info_Clientes y Clientes
+        # Verificar si el correo o el documento nacional ya están registrados
         cursor.execute("SELECT id FROM Info_Cliente WHERE correo = :correo", {'correo': data["correo"]})
         if cursor.fetchone():
             return jsonify({'error': 'El correo ya está registrado'}), 409
@@ -37,21 +37,25 @@ def create_cliente():
         # Hash de la contraseña
         hashedpass = bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
+        # Obtener el siguiente ID para Info_Cliente
         cursor.execute("SELECT info_cliente_seq.NEXTVAL FROM DUAL")
         info_id = cursor.fetchone()[0]
 
+        # Insertar en Info_Cliente
         cursor.execute("""
             INSERT INTO Info_Cliente (id, correo, correo_confirmado, passkey, numero, created_at) 
             VALUES (:id, :correo, :correo_confirmado, :passkey, :numero, SYSTIMESTAMP)
         """, {'id': info_id, 'correo': data["correo"], 'correo_confirmado': data["correo_confirmado"], 'passkey': hashedpass, 'numero': data["numero"]})
 
+        # Obtener el siguiente ID para CLIENTE
         cursor.execute("SELECT cliente_seq.NEXTVAL FROM DUAL")
         cliente_id = cursor.fetchone()[0]
 
+        # Insertar en CLIENTE con Actiivo = 'TRUE' por defecto
         cursor.execute("""
             INSERT INTO CLIENTE (id, Documento_nacional, Nombre_Cliente, Apellido_Cliente, Actiivo, created_at, id_info_cliente) 
-            VALUES (:id, :Documento_nacional, :Nombre_Cliente, :Apellido_Cliente, :activo, SYSTIMESTAMP, :id_info_cliente)
-        """, {'id': cliente_id, 'Documento_nacional': data["Documento_nacional"], 'Nombre_Cliente': data["Nombre_Cliente"], 'Apellido_Cliente': data["Apellido_Cliente"], 'activo': data["activo"], 'id_info_cliente': info_id})
+            VALUES (:id, :Documento_nacional, :Nombre_Cliente, :Apellido_Cliente, 'TRUE', SYSTIMESTAMP, :id_info_cliente)
+        """, {'id': cliente_id, 'Documento_nacional': data["Documento_nacional"], 'Nombre_Cliente': data["Nombre_Cliente"], 'Apellido_Cliente': data["Apellido_Cliente"], 'id_info_cliente': info_id})
 
         conn.commit()
 
@@ -112,7 +116,7 @@ def get_cliente(id):
     try:
         query = """
         SELECT 
-            c.id, c.Nombre_Cliente, c.Apellido_Cliente, ic.correo, ic.numero, c.created_at
+            c.id, c.Nombre_Cliente, c.Apellido_Cliente, ic.correo, ic.numero, c.created_at, c.Actiivo
         FROM CLIENTE c
         LEFT JOIN Info_Cliente ic ON c.id_info_cliente = ic.id
         WHERE c.id = :id
@@ -121,7 +125,7 @@ def get_cliente(id):
         cursor.execute(query, {'id': id})
         result = cursor.fetchone()
 
-        if result is None:
+        if result is None or result[6] == 'FALSE':  # Validamos si el cliente no existe o está inactivo
             return jsonify({'error': 'Usuario no encontrado'}), 404
 
         response = {

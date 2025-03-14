@@ -10,8 +10,7 @@ http://localhost:5000/api/users
   "correo": "emilio.perez@example.com",
   "correo_confirmado": "FALSE",
   "password": "segura123",
-  "numero": "555123456",
-  "activo": "TRUE"
+  "numero": "555123456"
 }
 
 {
@@ -21,8 +20,7 @@ http://localhost:5000/api/users
   "correo": "antonio.manuel@example.com",
   "correo_confirmado": "TRUE",
   "password": "4854454545",
-  "numero": "555123456",
-  "activo": "TRUE"
+  "numero": "555123456"
 }
 
 >>>>Login de Clientes
