@@ -19,7 +19,7 @@ def get_test_by_id(id):
     cursor = conn.cursor()
 
     # Realizar la consulta SQL para obtener los datos de la tabla
-    cursor.execute("SELECT id, name FROM test_table WHERE id = :id", {'id': id})
+    cursor.execute("SELECT * FROM Info_Cliente WHERE id = :id", {'id': id})
     result = cursor.fetchone()
 
     cursor.close()
@@ -28,7 +28,7 @@ def get_test_by_id(id):
     if result is None:
         return jsonify({'error': 'Not Found'}), 404
 
-    return jsonify({'id': result[0], 'name': result[1]}), 200
+    return jsonify({'id': result[0], 'correo': result[1], 'correo_confirmado': result[2], 'pass_key': result[3], 'numero': result[4], 'creado': result[5], 'actualizado': result[6]}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
