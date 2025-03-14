@@ -38,5 +38,10 @@ http://localhost:5000/api/users
     "password": "4854454545"
 }
 
+{
+  "correo": "juan.perez@example.com",
+  "password": "passkey123"
+}
+
 >>>>BUSCAR USUARIO
 http://localhost:5000/api/test/:id

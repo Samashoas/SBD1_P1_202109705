@@ -82,14 +82,19 @@ def login_cliente():
         result = cursor.fetchone()
 
         if result is None:
-            return jsonify({'error': 'Usuario no encontrado'}), 404
+            return jsonify({'error': 'Credenciales inválidas'}), 401
 
-        user_id, hashedpass = result
+        user_id, stored_passkey = result
 
-        if bcrypt.checkpw(data["password"].encode('utf-8'), hashedpass.encode('utf-8')):
+        if stored_passkey.startswith("$2b$"):  # Verifica si es un hash bcrypt
+            password_correct = bcrypt.checkpw(data["password"].encode('utf-8'), stored_passkey.encode('utf-8'))
+        else:  # Si no es hash, comparar directamente
+            password_correct = data["password"] == stored_passkey
+
+        if password_correct:
             return jsonify({"status": "Exitoso", "message": "Inicio de sesión exitoso", "user_id": user_id}), 200
         else:
-            return jsonify({"error": "Contraseña incorrecta"}), 401
+            return jsonify({"error": "Credenciales inválidas"}), 401
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
