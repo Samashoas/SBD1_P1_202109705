@@ -11,7 +11,8 @@ def get_db_connection():
     conn = oracledb.connect(user="SYSTEM", password="202109705", dsn=dsn)
     return conn
 
-# Crear Usuario
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>CLIENTES/USUARIOS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+# Crear nuevo cliente
 @app.route('/api/users/', methods=['POST'])
 def create_user():
     data = request.json
@@ -34,23 +35,19 @@ def create_user():
             return jsonify({'error': 'El Documento_nacional ya está registrado'}), 409
 
         # Hash de la contraseña
-        hashed_password = bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        hashedpass = bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-        # Obtiene el ID siguiente para Info_Cliente nuevo
         cursor.execute("SELECT info_cliente_seq.NEXTVAL FROM DUAL")
         info_id = cursor.fetchone()[0]
 
-        # Insertar en Info_Cliente
         cursor.execute("""
             INSERT INTO Info_Cliente (id, correo, correo_confirmado, passkey, numero, created_at) 
             VALUES (:id, :correo, :correo_confirmado, :passkey, :numero, SYSTIMESTAMP)
-        """, {'id': info_id, 'correo': data["correo"], 'correo_confirmado': data["correo_confirmado"], 'passkey': hashed_password, 'numero': data["numero"]})
+        """, {'id': info_id, 'correo': data["correo"], 'correo_confirmado': data["correo_confirmado"], 'passkey': hashedpass, 'numero': data["numero"]})
 
-        # Obtiene el ID siguiente para Cliente nuevo
         cursor.execute("SELECT cliente_seq.NEXTVAL FROM DUAL")
         cliente_id = cursor.fetchone()[0]
 
-        # Insertar en CLIENTE
         cursor.execute("""
             INSERT INTO CLIENTE (id, Documento_nacional, Nombre_Cliente, Apellido_Cliente, Actiivo, created_at, id_info_cliente) 
             VALUES (:id, :Documento_nacional, :Nombre_Cliente, :Apellido_Cliente, :activo, SYSTIMESTAMP, :id_info_cliente)
@@ -58,10 +55,43 @@ def create_user():
 
         conn.commit()
 
-        return jsonify({"status": "success", "message": "User created successfully"}), 201
+        return jsonify({"status": "Exitoso", "message": "Cliente creado de forma exitosa"}), 201
 
     except Exception as e:
         conn.rollback()
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+#Login de clientes (Correo y contraseña)
+@app.route('/api/users/login', methods=['POST'])
+def login_cliente():
+    data = request.json
+
+    required_fields = ["correo", "password"]
+    if not all(field in data for field in required_fields):
+        return jsonify({'error': 'Datos incompletos'}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("SELECT id, passkey FROM Info_Cliente WHERE correo = :correo", {'correo': data["correo"]})
+        result = cursor.fetchone()
+
+        if result is None:
+            return jsonify({'error': 'Usuario no encontrado'}), 404
+
+        user_id, hashedpass = result
+
+        if bcrypt.checkpw(data["password"].encode('utf-8'), hashedpass.encode('utf-8')):
+            return jsonify({"status": "Exitoso", "message": "Inicio de sesión exitoso", "user_id": user_id}), 200
+        else:
+            return jsonify({"error": "Contraseña incorrecta"}), 401
+
+    except Exception as e:
         return jsonify({"error": str(e)}), 500
 
     finally:

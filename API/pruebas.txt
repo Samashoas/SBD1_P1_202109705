@@ -1,0 +1,42 @@
+ENPOINTS Y PRUEBAS
+>>>>>>>>>>>>>>>>>>>>>>>>>USUARIOS/CLIENTES<<<<<<<<<<<<<<<<<<
+>>>>CREAR USUARIO
+http://localhost:5000/api/users
+
+{
+  "Documento_nacional": "606060606",
+  "Nombre_Cliente": "Emilio",
+  "Apellido_Cliente": "Pérez",
+  "correo": "emilio.perez@example.com",
+  "correo_confirmado": "FALSE",
+  "password": "segura123",
+  "numero": "555123456",
+  "activo": "TRUE"
+}
+
+{
+  "Documento_nacional": "6060644406",
+  "Nombre_Cliente": "Antonio",
+  "Apellido_Cliente": "Manuel",
+  "correo": "antonio.manuel@example.com",
+  "correo_confirmado": "TRUE",
+  "password": "4854454545",
+  "numero": "555123456",
+  "activo": "TRUE"
+}
+
+>>>>Login de Clientes
+@app.route('/api/users/login', methods=['POST'])
+
+{
+    "correo": "emilio.perez@example.com",
+    "password": "segura123"
+}
+
+{
+    "correo": "antonio.manuel@example.com",
+    "password": "4854454545"
+}
+
+>>>>BUSCAR USUARIO
+http://localhost:5000/api/test/:id
