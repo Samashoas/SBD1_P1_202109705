@@ -226,6 +226,86 @@ def deactivate_cliente(id):
         cursor.close()
         conn.close()
 
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>PRODUCTOS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+# Crear nuevo producto
+@app.route('/api/products/', methods=['POST'])
+def create_producto():
+    data = request.json
+
+    required_fields = ["sku", "nombre_producto", "descripcion_producto", "precio_producto", "descripcion_slug", "id_categoria"]
+    if not all(field in data for field in required_fields):
+        return jsonify({'error': 'Datos incompletos'}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # 🔹 Verificar si la categoría existe
+        cursor.execute("SELECT id FROM CATEGORIAS WHERE id = :id_categoria", {'id_categoria': data["id_categoria"]})
+        if not cursor.fetchone():
+            return jsonify({'error': 'Categoría no encontrada'}), 404
+
+        # 🔹 Verificar si el SKU ya existe
+        cursor.execute("SELECT id FROM SKU WHERE SKU = :sku", {'sku': data["sku"]})
+        if cursor.fetchone():
+            return jsonify({'error': 'El SKU ingresado ya existe'}), 409
+
+        # 🔹 Crear el nuevo SKU
+        cursor.execute("SELECT sku_seq.NEXTVAL FROM DUAL")
+        sku_id = cursor.fetchone()[0]
+
+        cursor.execute("""
+            INSERT INTO SKU (id, SKU, Nombre_Producto, Descripccion_Producto, Precio_Producto, created_at, updated_at) 
+            VALUES (:id, :sku, :nombre, :descripcion, :precio, SYSTIMESTAMP, SYSTIMESTAMP)
+        """, {
+            'id': sku_id,
+            'sku': data["sku"],  # Se usa el SKU ingresado por el usuario
+            'nombre': data["nombre_producto"],
+            'descripcion': data["descripcion_producto"],
+            'precio': data["precio_producto"]
+        })
+
+        # 🔹 Crear el nuevo SLUG
+        cursor.execute("SELECT slug_seq.NEXTVAL FROM DUAL")
+        slug_id = cursor.fetchone()[0]
+
+        cursor.execute("""
+            INSERT INTO SLUG (id, SLUD_description, created_at, updated_at) 
+            VALUES (:id, :descripcion, SYSTIMESTAMP, SYSTIMESTAMP)
+        """, {
+            'id': slug_id,
+            'descripcion': data["descripcion_slug"]
+        })
+
+        # 🔹 Crear el nuevo PRODUCTO
+        cursor.execute("SELECT producto_seq.NEXTVAL FROM DUAL")
+        producto_id = cursor.fetchone()[0]
+
+        cursor.execute("""
+            INSERT INTO PRODUCTO (id, created_at, updated_at, id_categoria, id_sku, id_slug) 
+            VALUES (:id, SYSTIMESTAMP, SYSTIMESTAMP, :id_categoria, :id_sku, :id_slug)
+        """, {
+            'id': producto_id,
+            'id_categoria': data["id_categoria"],
+            'id_sku': sku_id,
+            'id_slug': slug_id
+        })
+
+        conn.commit()
+
+        return jsonify({
+            "status": "Exitoso",
+            "message": "Producto creado exitosamente"
+        }), 201
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ORDENES<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 # Crear nueva orden
 @app.route('/api/orders/', methods=['POST'])
