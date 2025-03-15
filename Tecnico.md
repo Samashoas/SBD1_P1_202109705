@@ -79,9 +79,7 @@ De igual forma se recomienda el uso de docker para poder levantar el host que no
 
 * Instalar docker, el cual se puede obtener buscando docker en el navegador, de igual forma aquí hay un video para realizar todo el proceso de instalación:
 
-```bash
-[Instalacion de docker](https://www.youtube.com/watch?v=ZyBBv1JmnWQ)
-```
+** [Instalacion de docker](https://www.youtube.com/watch?v=ZyBBv1JmnWQ)
 
 * Buscar la imagen oficial de oracle en docker hub
 
