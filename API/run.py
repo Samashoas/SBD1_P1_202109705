@@ -379,7 +379,7 @@ def get_producto_by_id(id):
             return jsonify({'error': 'Producto no encontrado'}), 404
 
         if result[9] == 'FALSE':  
-            return jsonify({'error': 'Este producto ha sido eliminado lógicamente y no está disponible'}), 404
+            return jsonify({'error': 'Este producto no está disponible'}), 404
 
         response = {
             "id_producto": result[0],
