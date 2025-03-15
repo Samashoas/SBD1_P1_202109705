@@ -241,16 +241,13 @@ def create_pago():
     cursor = conn.cursor()
 
     try:
-        # 🔹 Verificar si el cliente existe
         cursor.execute("SELECT id FROM CLIENTE WHERE id = :id_cliente", {'id_cliente': data["id_cliente"]})
         if not cursor.fetchone():
             return jsonify({'error': 'Cliente no encontrado'}), 404
 
-        # 🔹 Obtener el siguiente ID para PAGOS
         cursor.execute("SELECT pago_seq.NEXTVAL FROM DUAL")
         pago_id = cursor.fetchone()[0]
 
-        # 🔹 Insertar en PAGOS
         cursor.execute("""
             INSERT INTO PAGOS (id, Metodo_pago, created_at, id_cliente) 
             VALUES (:id, :Metodo_pago, SYSTIMESTAMP, :id_cliente)
@@ -261,11 +258,47 @@ def create_pago():
         return jsonify({
             "status": "Exitoso",
             "message": "Pago creado de forma exitosa",
-            "id_pago": pago_id  # Devolvemos el ID generado
+            "id_pago": pago_id
         }), 201
 
     except Exception as e:
         conn.rollback()
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+# Obtener Pago por ID
+@app.route('/api/pagos/', methods=['GET'])
+def get_pagos():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        query = """
+        SELECT 
+            p.id, p.Metodo_pago, p.created_at, c.Nombre_Cliente, c.Apellido_Cliente
+        FROM PAGOS p
+        LEFT JOIN CLIENTE c ON p.id_cliente = c.id
+        """
+
+        cursor.execute(query)
+        results = cursor.fetchall()
+
+        pagos = []
+        for result in results:
+            pagos.append({
+                "id": result[0],
+                "Metodo de Pago": result[1],
+                "CreatedAt": result[2].isoformat() if result[2] else None,
+                "Nombre Cliente": result[3],
+                "Apellido Cliente": result[4]
+            })
+
+        return jsonify(pagos), 200
+
+    except Exception as e:
         return jsonify({"error": str(e)}), 500
 
     finally:

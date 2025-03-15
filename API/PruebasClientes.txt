@@ -1,5 +1,3 @@
-ENPOINTS Y PRUEBAS
->>>>>>>>>>>>>>>>>>>>>>>>>USUARIOS/CLIENTES<<<<<<<<<<<<<<<<<<
 >>>>CREAR USUARIO
 http://localhost:5000/api/users
 
