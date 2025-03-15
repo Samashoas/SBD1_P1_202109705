@@ -22,7 +22,7 @@ http://localhost:5000/api/users
 }
 
 >>>>Login de Clientes
-@app.route('/api/users/login', methods=['POST'])
+http://localhost:5000/api/users/login
 
 {
     "correo": "emilio.perez@example.com",
@@ -54,3 +54,6 @@ http://localhost:5000/api/users/:id
     "correo": "MiNuevoCorreo@example.com",
     "numero": "+502 25259696"
 }
+
+>>>Eliminar Cliente
+http://localhost:5000/api/users/:11
