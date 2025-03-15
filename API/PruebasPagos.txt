@@ -1,5 +1,5 @@
 >>>>>>>>CREAR PAGOS
-http://localhost:5000/api/pagos/
+http://localhost:5000/api/payments/
 
 {
   "id_cliente": 1,
@@ -8,3 +8,4 @@ http://localhost:5000/api/pagos/
 }
 
 >>>>>>LISTAR PAGOS
+http://localhost:5000/api/payments/

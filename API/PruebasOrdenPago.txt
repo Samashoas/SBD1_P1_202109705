@@ -1,0 +1,9 @@
+>>>>>>>Crear nueva orden
+http://localhost:5000/api/orders/
+{
+  "id_orden": 2,
+  "cantidad_ordenada": 3,
+  "id_producto": 1
+}
+
+>>>>>>Buscar orden de pago por ID

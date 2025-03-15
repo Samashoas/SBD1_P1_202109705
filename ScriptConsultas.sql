@@ -1,4 +1,4 @@
 
 SELECT info_cliente_seq.NEXTVAL, cliente_seq.NEXTVAL FROM DUAL;
 SELECT pago_seq.NEXTVAL FROM DUAL;
-
+SELECT pago_ord.NEXTVAL FROM DUAL;

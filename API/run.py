@@ -226,10 +226,166 @@ def deactivate_cliente(id):
         cursor.close()
         conn.close()
 
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ORDENES<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+# Crear nueva orden
+@app.route('/api/orders/', methods=['POST'])
+def create_pago_orden():
+    data = request.json
+
+    required_fields = ["id_orden", "cantidad_ordenada", "id_producto"]
+    if not all(field in data for field in required_fields):
+        return jsonify({'error': 'Datos incompletos'}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("SELECT id FROM ORDENES WHERE id = :id_orden", {'id_orden': data["id_orden"]})
+        if not cursor.fetchone():
+            return jsonify({'error': 'Orden no encontrada'}), 404
+
+        cursor.execute("""
+            SELECT s.Precio_Producto 
+            FROM SKU s 
+            JOIN PRODUCTO p ON p.id_sku = s.id 
+            WHERE p.id = :id_producto
+        """, {'id_producto': data["id_producto"]})
+
+        producto = cursor.fetchone()
+
+        if not producto:
+            return jsonify({'error': 'Producto no encontrado'}), 404
+
+        precio_producto = producto[0]
+        precio_total = data["cantidad_ordenada"] * precio_producto
+
+        cursor.execute("SELECT pago_ord.NEXTVAL FROM DUAL")
+        pago_orden_id = cursor.fetchone()[0]
+
+        cursor.execute("""
+            INSERT INTO Pago_Ordenes (id, Cantidad_ordenada, precio_orden, created_at, id_orden, id_producto) 
+            VALUES (:id, :cantidad_ordenada, :precio_orden, SYSTIMESTAMP, :id_orden, :id_producto)
+        """, {
+            'id': pago_orden_id,
+            'cantidad_ordenada': data["cantidad_ordenada"],
+            'precio_orden': precio_producto,
+            'id_orden': data["id_orden"], 
+            'id_producto': data["id_producto"]
+        })
+
+        conn.commit()
+
+        return jsonify({
+            "status": "Exitoso",
+            "message": "Pago de orden creado de forma exitosa",
+            "id_pago_orden": pago_orden_id,
+            "precio_total": precio_total
+        }), 201
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+# Obtener Ordenes de pago
+@app.route('/api/orders/', methods=['GET'])
+def list_pago_ordenes():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # 🔹 Consultar todas las órdenes de pago con información del producto
+        query = """
+        SELECT 
+            po.id, po.id_orden, po.id_producto, po.Cantidad_ordenada, po.precio_orden, 
+            s.Nombre_Producto, (po.Cantidad_ordenada * po.precio_orden) AS precio_total,
+            po.created_at, po.updated_at
+        FROM Pago_Ordenes po
+        JOIN PRODUCTO p ON po.id_producto = p.id
+        JOIN SKU s ON p.id_sku = s.id
+        ORDER BY po.created_at DESC
+        """
+
+        cursor.execute(query)
+        results = cursor.fetchall()
+
+        if not results:
+            return jsonify({'message': 'No hay órdenes de pago registradas'}), 200
+
+        ordenes = []
+        for result in results:
+            ordenes.append({
+                "id_pago_orden": result[0],
+                "id_orden": result[1],
+                "id_producto": result[2],
+                "cantidad_ordenada": result[3],
+                "precio_unitario": result[4],
+                "nombre_producto": result[5],
+                "precio_total": result[6],
+                "created_at": result[7].isoformat() if result[7] else None,
+                "updated_at": result[8].isoformat() if result[8] else None
+            })
+
+        return jsonify(ordenes), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+# Obtener Orden por ID
+@app.route('/api/orders/:<int:id>', methods=['GET'])
+def get_pago_orden(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # 🔹 Consultar la orden de pago junto con información del producto
+        query = """
+        SELECT 
+            po.id, po.id_orden, po.id_producto, po.Cantidad_ordenada, po.precio_orden, 
+            s.Nombre_Producto, (po.Cantidad_ordenada * po.precio_orden) AS precio_total,
+            po.created_at, po.updated_at
+        FROM Pago_Ordenes po
+        JOIN PRODUCTO p ON po.id_producto = p.id
+        JOIN SKU s ON p.id_sku = s.id
+        WHERE po.id = :id
+        """
+
+        cursor.execute(query, {'id': id})
+        result = cursor.fetchone()
+
+        if result is None:
+            return jsonify({'error': 'Orden no encontrada'}), 404
+
+        response = {
+            "id_pago_orden": result[0],
+            "id_orden": result[1],
+            "id_producto": result[2],
+            "cantidad_ordenada": result[3],
+            "precio_unitario": result[4],
+            "nombre_producto": result[5],
+            "precio_total": result[6],
+            "created_at": result[7].isoformat() if result[7] else None,
+            "updated_at": result[8].isoformat() if result[8] else None
+        }
+
+        return jsonify(response), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>PAGOS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 # Crear nuevo pago
-@app.route('/api/pagos/', methods=['POST'])
+@app.route('/api/payments/', methods=['POST'])
 def create_pago():
     data = request.json
 
@@ -270,7 +426,7 @@ def create_pago():
         conn.close()
 
 # Obtener Pago por ID
-@app.route('/api/pagos/', methods=['GET'])
+@app.route('/api/payments/', methods=['GET'])
 def get_pagos():
     conn = get_db_connection()
     cursor = conn.cursor()

@@ -257,6 +257,7 @@ CREATE TABLE Imagenes(
 );
 ALTER TABLE Imagenes ADD CONSTRAINT fk_producto_imagen FOREIGN KEY (id_producto) REFERENCES PRODUCTO(id);
 
+DROP SEQUENCE pago_order;
 DROP TABLE Pago_Ordenes;
 CREATE TABLE Pago_Ordenes(
     id NUMBER PRIMARY KEY,
@@ -269,6 +270,7 @@ CREATE TABLE Pago_Ordenes(
 );
 ALTER TABLE Pago_Ordenes ADD CONSTRAINT fk_orden_pago FOREIGN KEY (id_orden) REFERENCES ORDENES(id);
 ALTER TABLE Pago_Ordenes ADD CONSTRAINT fk_producto_pago FOREIGN KEY (id_producto) REFERENCES PRODUCTO(id);
+CREATE SEQUENCE pago_order START WITH 10 INCREMENT BY 1;
 
 DROP TABLE Ordenes_Productos;
 CREATE TABLE Ordenes_Productos(

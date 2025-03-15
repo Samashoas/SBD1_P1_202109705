@@ -1,11 +1,12 @@
 
+SELECT * FROM Pago_Ordenes;
 
-SELECT * FROM PAGOS;
 
 
 /*
 SELECT * FROM Info_Cliente;
 SELECT * FROM CLIENTE;
+SELECT * FROM PAGOS;
 SELECT * FROM test_table;
 SELECT * FROM Lugar_Entrega;
 SELECT * FROM SKU;
@@ -22,7 +23,6 @@ SELECT * FROM DIRECCIONES;
 SELECT * FROM Productos_Devolucion;
 SELECT * FROM Inventario;
 SELECT * FROM Imagenes;
-SELECT * FROM Pago_Ordenes;
 SELECT * FROM Ordenes_Productos;
 SELECT * FROM Movimientos;
 SELECT * FROM Movimiento_Productos;
