@@ -59,6 +59,48 @@ En este caso la API fue creada con el framework FLASK, framework del la cual con
 Para la instalación de flask primero tenemos que tener instalado python, el cual se instala desde la store de extenciones de visual studio code o utilizando el siguiente comando:
 
 ```bash
-$ gcloud compute instances create mi-vm --zone=us-central1-a --image-family=debian-9 --image-project=debian-cloud
-$ gcloud container clusters create sopes1 --num-nodes=1 --tags=allin,allout --machine-type=n1-standard-2 --no-enable-network-policy
+$ python --version
+$ pip --version
 ```
+
+Una vez instaldo python lo que tendremos que realizar es la instalación de nuestro framework, que en este caso es flask
+
+
+```bash
+$ pip install Flask
+$ python -m flask --version
+```
+
+De esta forma ya podemos empezar a trabajar con la creación de nuestra API.
+
+En este caso la API nos permitirá realizar consultas a nuestra base de datos, cosa que para ello se recomienda utilizar **SQL DEVELOPER** el cual se obtiene desde la store de visual studio code.
+
+De igual forma se recomienda el uso de docker para poder levantar el host que nos servirá para levantar nuestro servidor, para esto necesitaremos lo siguiente:
+
+* Instalar docker, el cual se puede obtener buscando docker en el navegador, de igual forma aquí hay un video para realizar todo el proceso de instalación:
+
+```bash
+[Instalacion de docker](https://www.youtube.com/watch?v=ZyBBv1JmnWQ)
+```
+
+* Buscar la imagen oficial de oracle en docker hub
+
+```bash
+$ docker search oracle/database
+```
+
+* Descargar la iamgen de Oracle
+
+```bash
+$ docker pull gvenzl/oracle-xe
+```
+
+* Crear y ejecutar el contenedor
+
+```bash
+$ docker run -d --name oracle-xe -p 1521:1521 -p 5500:5500 -e ORACLE_PASSWORD=your_password gvenzl/oracle-xe
+```
+
+Una vez realizado esto ya se puede proceder a la conexion de la base de datos con nuestra API.
+
+## ENDPOINTS
