@@ -1,0 +1,28 @@
+>>>>>Crear producto
+http://localhost:5000/api/products/
+
+{
+  "sku": "LAPTOP-XPS-001",
+  "nombre_producto": "Laptop Dell XPS",
+  "descripcion_producto": "Laptop ultradelgada con Intel i7",
+  "precio_producto": 1200.99,
+  "descripcion_slug": "laptop-dell-xps",
+  "id_categoria": 2
+}
+
+>>>>>Listar producto
+http://localhost:5000/api/products/
+
+>>>>Buscar producto
+http://localhost:5000/api/products/:ID
+
+>>>>Actualizar producto
+http://localhost:5000/api/products/:ID
+
+{
+  "precio_producto": 999.99,
+  "id_categoria": 3
+}
+
+>>>>Eliminar producto
+http://localhost:5000/api/products/:ID
