@@ -39,3 +39,15 @@ Para poder llegar a obtener estos esquemas primero hay que seguir algunas pautas
 ### Tercera fase normal (3FN):
 * Se basa en la 2NF y elimina las dependencias transitivas. Un atributo no clave no debe depender de otro atributo no clave.
 * Es decir, si A depende de B y B depende de C, entonces A debe depender directamente de C, o no debe depender de B en absoluto.
+
+En este caso la Normalización de las tablas se realizó en base al los siguientes CSV:
+* ![CSV PROYECTO 1](https://drive.google.com/drive/folders/1gwGvckRx3sAuRtZpQMKZwzTaFL4i7Fa8)
+
+De forma que despues de aplicar las primeras 3 fases de la normalización quedan nuestras tablas normalizadas con las cuales estaremos trabajando durante todo el proyecto
+* ![Tablas normalizadas Proyecto 1](https://docs.google.com/spreadsheets/d/1shWiuavApTypH0oO4eYShfWLYI0867wxHVzaHkl4IQw/edit?gid=0#gid=0)
+
+## CREACION DE LA API
+
+Antes de continuar con esto primero hay que definir lo que es una api
+
+
