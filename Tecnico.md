@@ -102,3 +102,85 @@ $ docker run -d --name oracle-xe -p 1521:1521 -p 5500:5500 -e ORACLE_PASSWORD=yo
 Una vez realizado esto ya se puede proceder a la conexion de la base de datos con nuestra API.
 
 ## ENDPOINTS
+
+* ¿Qué es un endpoint?: Un endpoint es una dirección específica de un servicio dentro de una API donde se pueden enviar solicitudes para realizar alguna operación, como obtener o modificar datos. Un endpoint está asociado a una ruta URL y un método HTTP (como GET, POST, PUT, DELETE), que indican qué acción se debe realizar sobre los datos.
+
+En este caso se utilizaron varios metodos y endpoints similares, ya que es principalmente el metodo que se le asigna al endpoint el que importa, y el que estará asignando el trabajo a realizar a la dirección de nuestro endpoint
+
+### Endpoints y metodos de clientes
+
+```bash
+>>>>CREAR USUARIO
+[@app.route('/api/users/', methods=['POST'])]
+http://localhost:5000/api/users
+
+>>>>Login de Clientes
+[@app.route('/api/users/login', methods=['POST'])]
+(http://localhost:5000/api/users)
+
+>>>>BUSCAR Cliente
+[@app.route('/api/users/:<int:id>', methods=['GET'])]
+http://localhost:5000/api/users/:id
+
+>>>Actualizar Cliente
+[@app.route('/api/users/:<int:id>', methods=['PUT'])]
+http://localhost:5000/api/users/:id
+
+>>>Eliminar Cliente
+[@app.route('/api/users/:<int:id>', methods=['DELETE'])]
+http://localhost:5000/api/users/:id
+
+```
+
+### Endpoints y metodos de Productos
+
+```bash
+>>>>CREAR PRODUCTO
+[@app.route('/api/products/', methods=['POST'])]
+http://localhost:5000/api/products
+
+>>>>LISTAR PRODUCTOS
+[@app.route('/api/products/', methods=['GET'])]
+(http://localhost:5000/api/products)
+
+>>>>BUSCAR PRODUCTO
+[@app.route('/api/products/:<int:id>', methods=['GET'])]
+http://localhost:5000/api/products/:id
+
+>>>Actualizar PRODUCTO
+[@app.route('/api/products/:<int:id>', methods=['PUT'])]
+http://localhost:5000/api/products/:id
+
+>>>Eliminar PRODUCTO
+[@app.route('/api/products/:<int:id>', methods=['DELETE'])]
+http://localhost:5000/api/products/:id
+
+```
+
+### Endpoints y metodos de Odenes de pago
+```bash
+>>>>>>>Crear nueva orden
+[@app.route('/api/orders/', methods=['POST'])]
+http://localhost:5000/api/orders/
+
+>>>>>>Buscar orden de pago por ID
+[@app.route('/api/orders/:<int:id>', methods=['GET'])]
+http://localhost:5000/api/orders/:ID
+
+>>>>>>Listar ordenes de pago
+[@app.route('/api/orders/', methods=['GET'])]
+http://localhost:5000/api/orders/
+
+```
+
+### Endpoints y metodos de Pagos
+```bash
+>>>>>>>>CREAR PAGOS
+[@app.route('/api/payments/', methods=['POST'])]
+http://localhost:5000/api/payments/
+
+>>>>>>LISTAR PAGOS
+[@app.route('/api/payments/', methods=['GET'])]
+http://localhost:5000/api/payments/
+
+```
