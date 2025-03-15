@@ -240,17 +240,14 @@ def create_producto():
     cursor = conn.cursor()
 
     try:
-        # 🔹 Verificar si la categoría existe
         cursor.execute("SELECT id FROM CATEGORIAS WHERE id = :id_categoria", {'id_categoria': data["id_categoria"]})
         if not cursor.fetchone():
             return jsonify({'error': 'Categoría no encontrada'}), 404
 
-        # 🔹 Verificar si el SKU ya existe
         cursor.execute("SELECT id FROM SKU WHERE SKU = :sku", {'sku': data["sku"]})
         if cursor.fetchone():
             return jsonify({'error': 'El SKU ingresado ya existe'}), 409
 
-        # 🔹 Crear el nuevo SKU
         cursor.execute("SELECT sku_seq.NEXTVAL FROM DUAL")
         sku_id = cursor.fetchone()[0]
 
@@ -259,13 +256,12 @@ def create_producto():
             VALUES (:id, :sku, :nombre, :descripcion, :precio, SYSTIMESTAMP, SYSTIMESTAMP)
         """, {
             'id': sku_id,
-            'sku': data["sku"],  # Se usa el SKU ingresado por el usuario
+            'sku': data["sku"],
             'nombre': data["nombre_producto"],
             'descripcion': data["descripcion_producto"],
             'precio': data["precio_producto"]
         })
 
-        # 🔹 Crear el nuevo SLUG
         cursor.execute("SELECT slug_seq.NEXTVAL FROM DUAL")
         slug_id = cursor.fetchone()[0]
 
@@ -277,7 +273,6 @@ def create_producto():
             'descripcion': data["descripcion_slug"]
         })
 
-        # 🔹 Crear el nuevo PRODUCTO
         cursor.execute("SELECT producto_seq.NEXTVAL FROM DUAL")
         producto_id = cursor.fetchone()[0]
 
@@ -306,6 +301,99 @@ def create_producto():
         cursor.close()
         conn.close()
 
+#Listar productos
+@app.route('/api/products/', methods=['GET'])
+def get_all_productos():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        query = """
+        SELECT 
+            p.id, s.SKU, s.Nombre_Producto, s.Descripccion_Producto, s.Precio_Producto, 
+            c.Nombre_Categoria, sl.SLUD_description, 
+            p.created_at, p.updated_at
+        FROM PRODUCTO p
+        JOIN SKU s ON p.id_sku = s.id
+        JOIN CATEGORIAS c ON p.id_categoria = c.id
+        JOIN SLUG sl ON p.id_slug = sl.id
+        ORDER BY p.created_at DESC
+        """
+
+        cursor.execute(query)
+        results = cursor.fetchall()
+
+        if not results:
+            return jsonify({'message': 'No hay productos registrados'}), 200
+
+        productos = []
+        for result in results:
+            productos.append({
+                "id_producto": result[0],
+                "sku": result[1],
+                "nombre_producto": result[2],
+                "descripcion_producto": result[3],
+                "precio_producto": result[4],
+                "categoria": result[5],
+                "slug": result[6],
+                "created_at": result[7].isoformat() if result[7] else None,
+                "updated_at": result[8].isoformat() if result[8] else None
+            })
+
+        return jsonify(productos), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+#Buscar producto por ID
+@app.route('/api/products/:<int:id>', methods=['GET'])
+def get_producto_by_id(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        query = """
+        SELECT 
+            p.id, s.SKU, s.Nombre_Producto, s.Descripccion_Producto, s.Precio_Producto, 
+            c.Nombre_Categoria, sl.SLUD_description, 
+            p.created_at, p.updated_at
+        FROM PRODUCTO p
+        JOIN SKU s ON p.id_sku = s.id
+        JOIN CATEGORIAS c ON p.id_categoria = c.id
+        JOIN SLUG sl ON p.id_slug = sl.id
+        WHERE p.id = :id
+        """
+
+        cursor.execute(query, {'id': id})
+        result = cursor.fetchone()
+
+        if result is None:
+            return jsonify({'error': 'Producto no encontrado'}), 404
+
+        response = {
+            "id_producto": result[0],
+            "sku": result[1],
+            "nombre_producto": result[2],
+            "descripcion_producto": result[3],
+            "precio_producto": result[4],
+            "categoria": result[5],
+            "slug": result[6],
+            "created_at": result[7].isoformat() if result[7] else None,
+            "updated_at": result[8].isoformat() if result[8] else None
+        }
+
+        return jsonify(response), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ORDENES<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 # Crear nueva orden
 @app.route('/api/orders/', methods=['POST'])
