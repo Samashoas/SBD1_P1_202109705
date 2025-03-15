@@ -25,7 +25,6 @@ def create_cliente():
     cursor = conn.cursor()
 
     try:
-        # Verificar si el correo o el documento nacional ya están registrados
         cursor.execute("SELECT id FROM Info_Cliente WHERE correo = :correo", {'correo': data["correo"]})
         if cursor.fetchone():
             return jsonify({'error': 'El correo ya está registrado'}), 409
@@ -34,24 +33,19 @@ def create_cliente():
         if cursor.fetchone():
             return jsonify({'error': 'El Documento_nacional ya está registrado'}), 409
 
-        # Hash de la contraseña
         hashedpass = bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-        # Obtener el siguiente ID para Info_Cliente
         cursor.execute("SELECT info_cliente_seq.NEXTVAL FROM DUAL")
         info_id = cursor.fetchone()[0]
 
-        # Insertar en Info_Cliente
         cursor.execute("""
             INSERT INTO Info_Cliente (id, correo, correo_confirmado, passkey, numero, created_at) 
             VALUES (:id, :correo, :correo_confirmado, :passkey, :numero, SYSTIMESTAMP)
         """, {'id': info_id, 'correo': data["correo"], 'correo_confirmado': data["correo_confirmado"], 'passkey': hashedpass, 'numero': data["numero"]})
 
-        # Obtener el siguiente ID para CLIENTE
         cursor.execute("SELECT cliente_seq.NEXTVAL FROM DUAL")
         cliente_id = cursor.fetchone()[0]
 
-        # Insertar en CLIENTE con Actiivo = 'TRUE' por defecto
         cursor.execute("""
             INSERT INTO CLIENTE (id, Documento_nacional, Nombre_Cliente, Apellido_Cliente, Actiivo, created_at, id_info_cliente) 
             VALUES (:id, :Documento_nacional, :Nombre_Cliente, :Apellido_Cliente, 'TRUE', SYSTIMESTAMP, :id_info_cliente)
@@ -90,9 +84,9 @@ def login_cliente():
 
         user_id, stored_passkey = result
 
-        if stored_passkey.startswith("$2b$"):  # Verifica si es un hash bcrypt
+        if stored_passkey.startswith("$2b$"):  
             password_correct = bcrypt.checkpw(data["password"].encode('utf-8'), stored_passkey.encode('utf-8'))
-        else:  # Si no es hash, comparar directamente
+        else:  
             password_correct = data["password"] == stored_passkey
 
         if password_correct:
@@ -125,7 +119,7 @@ def get_cliente(id):
         cursor.execute(query, {'id': id})
         result = cursor.fetchone()
 
-        if result is None or result[6] == 'FALSE':  # Validamos si el cliente no existe o está inactivo
+        if result is None or result[6] == 'FALSE':  
             return jsonify({'error': 'Usuario no encontrado'}), 404
 
         response = {
@@ -159,7 +153,6 @@ def update_cliente(id):
     cursor = conn.cursor()
 
     try:
-        # Obtener el ID correcto de Info_Cliente a partir de CLIENTE
         cursor.execute("SELECT id_info_cliente FROM CLIENTE WHERE id = :id", {'id': id})
         result = cursor.fetchone()
 
@@ -168,7 +161,6 @@ def update_cliente(id):
 
         id_info_cliente = result[0]
 
-        # Actualizar Info_Cliente
         cursor.execute("""
             UPDATE Info_Cliente
             SET correo = :correo, numero = :numero
@@ -194,7 +186,6 @@ def deactivate_cliente(id):
     cursor = conn.cursor()
 
     try:
-        # Verificar si el cliente existe y su estado
         cursor.execute("SELECT Actiivo FROM CLIENTE WHERE id = :id", {'id': id})
         result = cursor.fetchone()
 
@@ -203,11 +194,9 @@ def deactivate_cliente(id):
 
         estado_actual = result[0]
 
-        # Si ya está inactivo, devolver 404 como si no existiera
         if estado_actual == 'FALSE':
             return jsonify({'error': 'Cliente no encontrado'}), 404
 
-        # Actualizar el estado a inactivo
         cursor.execute("""
             UPDATE CLIENTE
             SET Actiivo = 'FALSE'
@@ -415,28 +404,24 @@ def update_producto(id):
     cursor = conn.cursor()
 
     try:
-        # 🔹 Verificar si el producto existe
         cursor.execute("SELECT id_sku FROM PRODUCTO WHERE id = :id", {'id': id})
         result = cursor.fetchone()
 
         if result is None:
             return jsonify({'error': 'Producto no encontrado'}), 404
 
-        id_sku = result[0]  # Obtener el id_sku del producto
+        id_sku = result[0]  
 
-        # 🔹 Verificar si la nueva categoría existe
         cursor.execute("SELECT id FROM CATEGORIAS WHERE id = :id_categoria", {'id_categoria': data["id_categoria"]})
         if not cursor.fetchone():
             return jsonify({'error': 'Categoría no encontrada'}), 404
 
-        # 🔹 Actualizar el precio en la tabla SKU
         cursor.execute("""
             UPDATE SKU 
             SET Precio_Producto = :precio_producto, updated_at = SYSTIMESTAMP 
             WHERE id = :id_sku
         """, {'precio_producto': data["precio_producto"], 'id_sku': id_sku})
 
-        # 🔹 Actualizar la categoría en la tabla PRODUCTO
         cursor.execute("""
             UPDATE PRODUCTO 
             SET id_categoria = :id_categoria, updated_at = SYSTIMESTAMP 
@@ -466,12 +451,10 @@ def delete_producto(id):
     cursor = conn.cursor()
 
     try:
-        # 🔹 Verificar si el producto existe
         cursor.execute("SELECT id FROM PRODUCTO WHERE id = :id", {'id': id})
         if not cursor.fetchone():
             return jsonify({'error': 'Producto no encontrado'}), 404
 
-        # 🔹 Marcar el producto como eliminado lógicamente
         cursor.execute("""
             UPDATE PRODUCTO 
             SET activo = 'FALSE', updated_at = SYSTIMESTAMP 
@@ -563,7 +546,6 @@ def list_pago_ordenes():
     cursor = conn.cursor()
 
     try:
-        # 🔹 Consultar todas las órdenes de pago con información del producto
         query = """
         SELECT 
             po.id, po.id_orden, po.id_producto, po.Cantidad_ordenada, po.precio_orden, 
@@ -610,7 +592,6 @@ def get_pago_orden(id):
     cursor = conn.cursor()
 
     try:
-        # 🔹 Consultar la orden de pago junto con información del producto
         query = """
         SELECT 
             po.id, po.id_orden, po.id_producto, po.Cantidad_ordenada, po.precio_orden, 
