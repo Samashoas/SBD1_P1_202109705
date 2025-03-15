@@ -50,4 +50,15 @@ De forma que despues de aplicar las primeras 3 fases de la normalización quedan
 
 Antes de continuar con esto primero hay que definir lo que es una api
 
+* API: Una API (Interfaz de Programación de Aplicaciones, por sus siglas en inglés: Application Programming Interface) es un conjunto de reglas y protocolos que permite la comunicación entre diferentes sistemas, aplicaciones o servicios. Es una interfaz que define cómo se deben solicitar y recibir datos o funcionalidades entre software, permitiendo que programas diferentes interactúen sin necesidad de conocer los detalles internos de su implementación.
 
+En este caso la API fue creada con el framework FLASK, framework del la cual conoceremos un poco
+
+* FLASK: Flask es un framework web ligero y de microservicios para Python. Está diseñado para facilitar la creación de aplicaciones web simples o complejas, permitiendo a los desarrolladores crear sitios y servicios con rapidez, sin forzar una estructura o depender de herramientas pesadas.
+
+Para la instalación de flask primero tenemos que tener instalado python, el cual se instala desde la store de extenciones de visual studio code o utilizando el siguiente comando:
+
+```bash
+$ gcloud compute instances create mi-vm --zone=us-central1-a --image-family=debian-9 --image-project=debian-cloud
+$ gcloud container clusters create sopes1 --num-nodes=1 --tags=allin,allout --machine-type=n1-standard-2 --no-enable-network-policy
+```
