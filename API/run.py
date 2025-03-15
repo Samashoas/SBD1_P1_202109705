@@ -226,5 +226,51 @@ def deactivate_cliente(id):
         cursor.close()
         conn.close()
 
+
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>PAGOS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+# Crear nuevo pago
+@app.route('/api/pagos/', methods=['POST'])
+def create_pago():
+    data = request.json
+
+    required_fields = ["id_cliente", "monto", "Metodo_pago"]
+    if not all(field in data for field in required_fields):
+        return jsonify({'error': 'Datos incompletos'}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # 🔹 Verificar si el cliente existe
+        cursor.execute("SELECT id FROM CLIENTE WHERE id = :id_cliente", {'id_cliente': data["id_cliente"]})
+        if not cursor.fetchone():
+            return jsonify({'error': 'Cliente no encontrado'}), 404
+
+        # 🔹 Obtener el siguiente ID para PAGOS
+        cursor.execute("SELECT pago_seq.NEXTVAL FROM DUAL")
+        pago_id = cursor.fetchone()[0]
+
+        # 🔹 Insertar en PAGOS
+        cursor.execute("""
+            INSERT INTO PAGOS (id, Metodo_pago, created_at, id_cliente) 
+            VALUES (:id, :Metodo_pago, SYSTIMESTAMP, :id_cliente)
+        """, {'id': pago_id, 'Metodo_pago': data["Metodo_pago"], 'id_cliente': data["id_cliente"]})
+
+        conn.commit()
+
+        return jsonify({
+            "status": "Exitoso",
+            "message": "Pago creado de forma exitosa",
+            "id_pago": pago_id  # Devolvemos el ID generado
+        }), 201
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+        
 if __name__ == '__main__':
     app.run(debug=True)
