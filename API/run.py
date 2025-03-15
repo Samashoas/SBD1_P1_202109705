@@ -256,7 +256,7 @@ def create_producto():
             VALUES (:id, :sku, :nombre, :descripcion, :precio, SYSTIMESTAMP, SYSTIMESTAMP)
         """, {
             'id': sku_id,
-            'sku': data["sku"],
+            'sku': data["sku"],  
             'nombre': data["nombre_producto"],
             'descripcion': data["descripcion_producto"],
             'precio': data["precio_producto"]
@@ -277,8 +277,8 @@ def create_producto():
         producto_id = cursor.fetchone()[0]
 
         cursor.execute("""
-            INSERT INTO PRODUCTO (id, created_at, updated_at, id_categoria, id_sku, id_slug) 
-            VALUES (:id, SYSTIMESTAMP, SYSTIMESTAMP, :id_categoria, :id_sku, :id_slug)
+            INSERT INTO PRODUCTO (id, created_at, updated_at, id_categoria, id_sku, id_slug, activo) 
+            VALUES (:id, SYSTIMESTAMP, SYSTIMESTAMP, :id_categoria, :id_sku, :id_slug, 'TRUE')
         """, {
             'id': producto_id,
             'id_categoria': data["id_categoria"],
@@ -290,7 +290,11 @@ def create_producto():
 
         return jsonify({
             "status": "Exitoso",
-            "message": "Producto creado exitosamente"
+            "message": "Producto creado exitosamente",
+            "id_producto": producto_id,
+            "id_sku": sku_id,
+            "sku": data["sku"],
+            "id_slug": slug_id
         }), 201
 
     except Exception as e:
@@ -317,7 +321,7 @@ def get_all_productos():
         JOIN SKU s ON p.id_sku = s.id
         JOIN CATEGORIAS c ON p.id_categoria = c.id
         JOIN SLUG sl ON p.id_slug = sl.id
-        ORDER BY p.created_at DESC
+        WHERE p.activo = 'TRUE'
         """
 
         cursor.execute(query)
@@ -360,7 +364,7 @@ def get_producto_by_id(id):
         SELECT 
             p.id, s.SKU, s.Nombre_Producto, s.Descripccion_Producto, s.Precio_Producto, 
             c.Nombre_Categoria, sl.SLUD_description, 
-            p.created_at, p.updated_at
+            p.created_at, p.updated_at, p.activo
         FROM PRODUCTO p
         JOIN SKU s ON p.id_sku = s.id
         JOIN CATEGORIAS c ON p.id_categoria = c.id
@@ -373,6 +377,9 @@ def get_producto_by_id(id):
 
         if result is None:
             return jsonify({'error': 'Producto no encontrado'}), 404
+
+        if result[9] == 'FALSE':  
+            return jsonify({'error': 'Este producto ha sido eliminado lógicamente y no está disponible'}), 404
 
         response = {
             "id_producto": result[0],
@@ -389,6 +396,97 @@ def get_producto_by_id(id):
         return jsonify(response), 200
 
     except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+#Actualizar producto por ID
+@app.route('/api/products/:<int:id>', methods=['PUT'])
+def update_producto(id):
+    data = request.json
+
+    required_fields = ["precio_producto", "id_categoria"]
+    if not all(field in data for field in required_fields):
+        return jsonify({'error': 'Datos incompletos'}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # 🔹 Verificar si el producto existe
+        cursor.execute("SELECT id_sku FROM PRODUCTO WHERE id = :id", {'id': id})
+        result = cursor.fetchone()
+
+        if result is None:
+            return jsonify({'error': 'Producto no encontrado'}), 404
+
+        id_sku = result[0]  # Obtener el id_sku del producto
+
+        # 🔹 Verificar si la nueva categoría existe
+        cursor.execute("SELECT id FROM CATEGORIAS WHERE id = :id_categoria", {'id_categoria': data["id_categoria"]})
+        if not cursor.fetchone():
+            return jsonify({'error': 'Categoría no encontrada'}), 404
+
+        # 🔹 Actualizar el precio en la tabla SKU
+        cursor.execute("""
+            UPDATE SKU 
+            SET Precio_Producto = :precio_producto, updated_at = SYSTIMESTAMP 
+            WHERE id = :id_sku
+        """, {'precio_producto': data["precio_producto"], 'id_sku': id_sku})
+
+        # 🔹 Actualizar la categoría en la tabla PRODUCTO
+        cursor.execute("""
+            UPDATE PRODUCTO 
+            SET id_categoria = :id_categoria, updated_at = SYSTIMESTAMP 
+            WHERE id = :id
+        """, {'id_categoria': data["id_categoria"], 'id': id})
+
+        conn.commit()
+
+        return jsonify({
+            "status": "Exitoso",
+            "message": "Producto actualizado correctamente"
+        }), 200
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+#Eliminar producto por ID
+Disable = {}
+@app.route('/api/products/:<int:id>', methods=['DELETE'])
+def delete_producto(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # 🔹 Verificar si el producto existe
+        cursor.execute("SELECT id FROM PRODUCTO WHERE id = :id", {'id': id})
+        if not cursor.fetchone():
+            return jsonify({'error': 'Producto no encontrado'}), 404
+
+        # 🔹 Marcar el producto como eliminado lógicamente
+        cursor.execute("""
+            UPDATE PRODUCTO 
+            SET activo = 'FALSE', updated_at = SYSTIMESTAMP 
+            WHERE id = :id
+        """, {'id': id})
+
+        conn.commit()
+
+        return jsonify({
+            "status": "Exitoso",
+            "message": "Producto marcado como eliminado lógicamente"
+        }), 200
+
+    except Exception as e:
+        conn.rollback()
         return jsonify({"error": str(e)}), 500
 
     finally:
